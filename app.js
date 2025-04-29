@@ -27,10 +27,10 @@ app.use(cors({
 
 
 app.use(express.static(__dirname));
-app.use("/images", express.static(path.join(__dirname, "images")));
+app.use("/documents", express.static(path.join(__dirname, "documents")));
 
 
-app.listen(PORT, async () => {
+app.listen(PORT, async () => { 
   try {
     app.get('/', (req, res) => {
       res.send('Hello World!')
