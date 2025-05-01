@@ -1,11 +1,11 @@
 import bcrypt from "bcryptjs";
 import { createToken } from "../config/createToken.js";
-import { Admin } from "../database/models/user.js";
+import { Employee } from "../database/models/employee.js";
 
 
 export const getAuthUserService = async (userId) => {
   try {
-    const user = await Admin.findOne({
+    const user = await Employee.findOne({
       where: {id: userId},
       attributes: { exclude: ['password'] }
     });
@@ -22,22 +22,22 @@ export const getAuthUserService = async (userId) => {
 export const registerUserService = async (req) => {
   try { 
     const salt = bcrypt.genSaltSync(10);
-    const newUser = await Admin.create({
+    const newUser = await Employee.create({
       name: req.body.name,
       surname: req.body.surname,
       patronymic: req.body.patronymic,
-      userName: req.body.userName,
       password: bcrypt.hashSync(req.body.password, salt),
     });
     const authUser = createToken(newUser);
     return authUser
   } catch (error) {
-    console.log(error);
+    console.log("Server is not responding:", error)
+    return res.status(500).json({ message: "Server is not responding" })
   }
 };
 
 export const loginUserService = async (req) => {
-  const candidate = await Admin.findOne({ where: { name: req.body.name, surname: req.body.surname } });
+  const candidate = await Employee.findOne({ where: { name: req.body.name, surname: req.body.surname } });
 
   if (candidate) {
     const passwordResult = bcrypt.compareSync(

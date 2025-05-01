@@ -3,11 +3,10 @@ import { Services } from "../database/models/Services.js";
 export const createService = async (req, res) => {
   
   try {
-    const { name, price, typeService, category, description } = req.body;
+    const { name, price, category, description } = req.body;
     await Services.create({
       name,
       price,
-      typeService,
       category,
       description
     });

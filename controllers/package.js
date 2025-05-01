@@ -1,10 +1,19 @@
-import { Packages, Bundle } from "../database/models/package.js";
+import { Packages } from "../database/models/package.js";
+import { Services } from "../database/models/Services.js";
 
 export const createPackage = async (req, res) => {
+  const { name, price, services,type } = req.body;
   
   try {
-    await Packages.create(req.body);
-    const packages = await Packages.findAll();
+    const newPackage = await Packages.create({name, price, type});
+    const newServices = await Promise.all(
+      services.map(service => Services.create({name: service.name, description: service.description}))
+    )
+    console.log(newServices)
+    await newPackage.addServices(newServices)
+    const packages = await Packages.findByPk(newPackage.id, {
+      include: [{model: Services, as: "services"}]
+    })
     if(!packages){
       return res.status(404).json({message: "Packages of services not found"})
     }
@@ -14,10 +23,10 @@ export const createPackage = async (req, res) => {
     return res.status(500).json({ message: "Server is not responding" })
   }
 };
-
+ 
 export const getAllPackages = async(req, res) => {
   try {
-    const packages = await Packages.findAll();
+    const packages = await Packages.findAll({include: [{model: Services, as: "services"}]});
     if(!packages){
       return res.status(404).json({message: "Packages of services not found"})
     }
@@ -28,7 +37,7 @@ export const getAllPackages = async(req, res) => {
   }
 }
 
-export const deletePackage = async(req, res) => {
+export const deletePackage = async(req, res) => { 
   try {
     const service = await Packages.findByPk(req.params.id);
     if (!service) {

@@ -1,5 +1,9 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../connact.js";
+import { Adress } from "./adress.js";
+import { Record } from "./record.js";
+import { Agreement } from "./agreement.js";
+import { Documents } from "./document.js";
 
 
 export const Client = sequelize.define(
@@ -10,19 +14,15 @@ export const Client = sequelize.define(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    numberTicket: DataTypes.INTEGER,
     name: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(50),
     },
     surname: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(50),
     },
-    patronymic: DataTypes.STRING,
-    phone: DataTypes.STRING,
-    passport: DataTypes.STRING,
-    date: DataTypes.STRING,
-    service: DataTypes.STRING,
-    action: DataTypes.STRING
+    patronymic: DataTypes.STRING(50),
+    phone: DataTypes.STRING(50),
+    passport: DataTypes.STRING(50),
   },
   {
     tableName: "client",
@@ -31,29 +31,49 @@ export const Client = sequelize.define(
 );
 
 
-export const Documents = sequelize.define('Documents', {
-  id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
-    primaryKey: true,
-    allowNull: false
-  },
-  documentType: DataTypes.STRING,
-  documentFile: DataTypes.STRING,
-  description: DataTypes.STRING,
-  date: DataTypes.STRING
-}, {
-  timestamps: true,
-  tableName: 'documents'
-});
 
 Client.hasMany(Documents, {
-  foreignKey: 'clientId', // имя поля внешнего ключа в таблице services
-  as: 'document', // алиас для использования при eager loading
-  onDelete: 'CASCADE' // при удалении пакета удаляются все его услуги
+  foreignKey: 'clientId', 
+  as: 'document', 
+  onDelete: 'CASCADE'
 });
 
 Documents.belongsTo(Client, {
   foreignKey: 'clientId',
   as: 'client'
 });
+
+Client.hasMany(Adress, {
+  foreignKey: "clientId",
+  as: "adress",
+  onDelete: "CASCADE"
+})
+
+Adress.belongsTo(Client, {
+  foreignKey: "clientId",
+  as: "client"
+})
+
+
+Client.hasMany(Record, {
+  foreignKey: "clientId",
+  as: "record",
+  onDelete: "CASCADE"
+})
+
+Record.belongsTo(Client, {
+  foreignKey: "clientId",
+  as: "client"
+})
+
+
+Client.hasMany(Agreement, {
+  foreignKey: "clientId",
+  as: "agreement",
+  onDelete: "CASCADE"
+})
+
+Agreement.belongsTo(Client, {
+  foreignKey: "clientId",
+  as: "client"
+})

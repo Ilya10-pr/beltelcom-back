@@ -9,7 +9,6 @@ dotenv.config()
 
 export const authMeController = async (req, res) => {
   try {
-    console.log("контроллер", req.user.id)
     const user = await getAuthUserService(req.user.id);
     if(!user){
       return res.status(HttpStatus.NOT_FOUND).json({ message: "User not found" })

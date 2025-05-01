@@ -1,26 +1,18 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../connact.js";
 
-
-
-export const Services = sequelize.define('Services', {
+export const Documents = sequelize.define('Documents', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
     allowNull: false
   },
-  category: DataTypes.STRING(50),
-  name: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-  },
-  price: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-  },
+  documentType: DataTypes.STRING(100),
+  documentFile: DataTypes.STRING(100),
   description: DataTypes.STRING(100),
+  date: DataTypes.STRING(100)
 }, {
   timestamps: false,
-  tableName: 'services'
+  tableName: 'documents'
 });
