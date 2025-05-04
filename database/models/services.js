@@ -19,6 +19,7 @@ export const Services = sequelize.define('Services', {
     type: DataTypes.STRING(50),
     allowNull: true,
   },
+  type: DataTypes.STRING(100),
   description: DataTypes.STRING(100),
 }, {
   timestamps: false,

@@ -8,7 +8,7 @@ import { Agreement } from "../database/models/agreement.js";
 
 
 export const createClient= async (req, res) => {
-  const {action, date, infoUser, service} = req.body;
+  const {action, date, infoUser, service, time} = req.body;
   
   try {
     const client = await Client.create(infoUser);
@@ -21,7 +21,8 @@ export const createClient= async (req, res) => {
       ticket: numberTicket,
       action: action,
       service: service,
-      date: date 
+      date: date,
+      time: time
     }); 
 
     await client.addRecord(newRecord); 
@@ -94,14 +95,15 @@ export const addDocumentOfClient = async(req, res) => { //проверить р�
   try {
     const info = JSON.parse(req.body.data);
     const documentFile = req.file.path  
-    const {documentType, description, date} = info;     
+    const {documentType, description, date, street, house, flat} = info;     
     const client = await Client.findByPk(req.params.id);
     if (!client) {
       return res.status(404).json({ message: "Client not found" });
     }
-
+    const newAdress = await Adress.create({street, house, flat})
     const newDocument = await Documents.create({documentType, documentFile, description, date}); 
-    
+
+    await client.addAdress(newAdress);
     await client.addDocument(newDocument);
     
     const clientWithData = await Client.findByPk(req.params.id, {
@@ -117,7 +119,7 @@ export const addDocumentOfClient = async(req, res) => { //проверить р�
 
 export const createAgreement = async(req, res) => { //проверить работу 
   const number = +(1777000 + (req.params.id.match(/\d+/g).join("").slice(0, 7)))
-  const {title, street, house, flat, passport} = req.body    
+  const {title,  passport} = req.body    
   try {
     const client = await Client.findByPk(req.params.id);
     if (!client) {
@@ -125,10 +127,8 @@ export const createAgreement = async(req, res) => { //проверить раб�
     }
     await client.update({passport: passport})
 
-    const newAdress = await Adress.create({street, house, flat})
     const newAgreement = await Agreement.create({number, title});
     
-    await client.addAdress(newAdress);
     await client.addAgreement(newAgreement); 
     
     const clientWithData = await Client.findByPk(req.params.id, {
