@@ -91,7 +91,7 @@ export const getClientByName = async(req, res) => {
 }
 
 
-export const addDocumentOfClient = async(req, res) => { //проверить работу 
+export const addDocumentOfClient = async(req, res) => { 
   try {
     const info = JSON.parse(req.body.data);
     const documentFile = req.file.path  
@@ -100,10 +100,11 @@ export const addDocumentOfClient = async(req, res) => { //проверить р�
     if (!client) {
       return res.status(404).json({ message: "Client not found" });
     }
-    const newAdress = await Adress.create({street, house, flat})
+    if(street) {
+      const newAdress = await Adress.create({street, house, flat})
+      await client.addAdress(newAdress);
+    }
     const newDocument = await Documents.create({documentType, documentFile, description, date}); 
-
-    await client.addAdress(newAdress);
     await client.addDocument(newDocument);
     
     const clientWithData = await Client.findByPk(req.params.id, {
@@ -111,7 +112,7 @@ export const addDocumentOfClient = async(req, res) => { //проверить р�
     });
     return res.status(200).json(clientWithData);  
   } catch (error) {
-    console.log("Server is not responding:", error)
+    console.log("Server is not responding:", error) 
     return res.status(500).json({ message: "Server is not responding" })
   } 
 }
