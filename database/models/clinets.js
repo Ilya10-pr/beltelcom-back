@@ -4,6 +4,8 @@ import { Adress } from "./adress.js";
 import { Record } from "./record.js";
 import { Agreement } from "./agreement.js";
 import { Documents } from "./document.js";
+import { Packages } from "./package.js";
+import { Services } from "./Services.js";
 
 
 export const Client = sequelize.define(
@@ -74,6 +76,28 @@ Client.hasMany(Agreement, {
 })
 
 Agreement.belongsTo(Client, {
+  foreignKey: "clientId",
+  as: "client"
+})
+
+Client.hasMany(Packages, {
+  foreignKey: "clientId",
+  as: "packages",
+  onDelete: "CASCADE"
+})
+
+Packages.belongsTo(Client, {
+  foreignKey: "clientId",
+  as: "client"
+})
+
+Client.hasMany(Services, {
+  foreignKey: "clientId",
+  as: "services",
+  onDelete: "CASCADE"
+})
+
+Services.belongsTo(Client, {
   foreignKey: "clientId",
   as: "client"
 })
