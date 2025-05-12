@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../connact.js";
 import { Services } from "./Services.js";
+import { Agreement } from "./agreement.js";
 
 
 export const Packages = sequelize.define('Packages', {
@@ -37,6 +38,17 @@ Packages.hasMany(Services, {
 });
 
 Services.belongsTo(Packages, {
+  foreignKey: "packageId",
+  as: "package"
+})
+
+Packages.hasMany(Agreement, {
+  foreignKey: "packageId",
+  as: "agreement",
+  onDelete: "CASCADE"
+})
+
+Agreement.belongsTo(Packages, {
   foreignKey: "packageId",
   as: "package"
 })

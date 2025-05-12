@@ -80,24 +80,3 @@ Agreement.belongsTo(Client, {
   as: "client"
 })
 
-Client.hasMany(Packages, {
-  foreignKey: "clientId",
-  as: "packages",
-  onDelete: "CASCADE"
-})
-
-Packages.belongsTo(Client, {
-  foreignKey: "clientId",
-  as: "client"
-})
-
-Client.hasMany(Services, {
-  foreignKey: "clientId",
-  as: "services",
-  onDelete: "CASCADE"
-})
-
-Services.belongsTo(Client, {
-  foreignKey: "clientId",
-  as: "client"
-})
