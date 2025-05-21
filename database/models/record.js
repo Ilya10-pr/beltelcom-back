@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../connact.js";
+import { Services } from "./Services.js";
 
 export const Record = sequelize.define('Records', {
   id: {
@@ -17,3 +18,14 @@ export const Record = sequelize.define('Records', {
   timestamps: false,
   tableName: 'record'
 });
+
+Record.hasMany(Services, {
+  foreignKey: "recordId",
+  as: "services",
+  onDelete: "CASCADE"
+});
+
+Services.belongsTo(Record, {
+  foreignKey: "recordId",
+  as: "recrod"
+})

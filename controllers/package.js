@@ -1,11 +1,15 @@
 import { Packages } from "../database/models/package.js";
 import { Services } from "../database/models/Services.js";
+import { PackagesAndServices } from "../database/models/packageAndServices.js";
+
+
 
 export const createPackage = async (req, res) => {
   const { name, price, services,type } = req.body;
   
   try {
     const newPackage = await Packages.create({name, price, type});
+    const newPackageWithService = await PackagesAndServices.create()
     const newServices = await Promise.all(
       services.map(service => Services.create({name: service.name, description: service.description}))
     )

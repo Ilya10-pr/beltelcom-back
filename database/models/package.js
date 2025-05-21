@@ -19,12 +19,12 @@ export const Packages = sequelize.define('Packages', {
     type: DataTypes.STRING(100),
     defaultValue: "package"
   },
-  type: DataTypes.STRING(100),
+  // type: DataTypes.STRING(100),
   price: {
     type: DataTypes.STRING(100),
     allowNull: false,
   },
-  description: DataTypes.STRING(100)
+  // description: DataTypes.STRING(100)
 }, {
   timestamps: false,
   tableName: 'packages'
