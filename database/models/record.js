@@ -19,13 +19,3 @@ export const Record = sequelize.define('Records', {
   tableName: 'record'
 });
 
-Record.hasMany(Services, {
-  foreignKey: "recordId",
-  as: "services",
-  onDelete: "CASCADE"
-});
-
-Services.belongsTo(Record, {
-  foreignKey: "recordId",
-  as: "recrod"
-})

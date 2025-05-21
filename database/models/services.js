@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../connact.js";
 import { Agreement } from "./agreement.js";
+import { Record } from "./record.js";
 
 
 
@@ -37,4 +38,15 @@ Services.hasMany(Agreement, {
 Agreement.belongsTo(Services, {
   foreignKey: "servicesId",
   as: "service"
+})
+
+Services.hasMany(Record, {
+  foreignKey: "serviceId",
+  as: "record",
+  onDelete: "CASCADE"
+})
+
+Record.belongsTo(Services, {
+  foreignKey: "serviceId",
+  as: "services"
 })
