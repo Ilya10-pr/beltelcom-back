@@ -12,7 +12,7 @@ export const Record = sequelize.define('Records', {
   ticket: DataTypes.INTEGER,
   action: DataTypes.STRING(100),
   date: DataTypes.DATE,
-  time: DataTypes.STRING(100)
+  time: DataTypes.TIME
 }, {
   timestamps: false,
   tableName: 'record'
