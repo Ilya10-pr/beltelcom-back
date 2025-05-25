@@ -17,17 +17,6 @@ export const PackagesAndServices = sequelize.define('PackagesAndServices', {
 }); 
 
 
-Packages.belongsToMany(Services, {
-  through: 'PackagesAndServices',
-  foreignKey: 'packageId',
-  otherKey: 'serviceId',
-  as: 'servicesInPackages'
-});
-
-Services.belongsToMany(Packages, {
-  through: 'PackagesAndServices',
-  foreignKey: 'serviceId',
-  otherKey: 'packageId',
-  as: 'packagesInServices'
-});
+Packages.belongsToMany(Services, { through: PackagesAndServices, as: "services" });
+Services.belongsToMany(Packages, { through: PackagesAndServices, as: "packages" });
 

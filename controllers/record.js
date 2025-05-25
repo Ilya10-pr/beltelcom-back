@@ -20,7 +20,6 @@ export const createRecord = async (req, res) => {
   
   try {
     const newRecords = await Promise.all(data.map(d => Record.create(d)))
-    console.log(newRecords)
     const records = await Record.findAll(); 
     if(!records){
       return res.status(404).json({message: "Records of services not found"})

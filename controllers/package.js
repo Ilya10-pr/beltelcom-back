@@ -5,28 +5,41 @@ import { PackagesAndServices } from "../database/models/packageAndServices.js";
 
 
 export const createPackage = async (req, res) => {
-  const { name, price, services,type } = req.body;
-  
+  const { name, price, type, services } = req.body;
+
   try {
-    const newPackage = await Packages.create({name, price, type});
-    const newPackageWithService = await PackagesAndServices.create()
-    const newServices = await Promise.all(
-      services.map(service => Services.create({name: service.name, description: service.description}))
-    )
-    console.log(newServices)
-    await newPackage.addServices(newServices)
-    const packages = await Packages.findByPk(newPackage.id, {
-      include: [{model: Services, as: "services"}]
-    })
-    if(!packages){
-      return res.status(404).json({message: "Packages of services not found"})
+    // Валидация
+    if (!services || !Array.isArray(services) || services.length === 0) {
+      return res.status(400).json({ message: "services must be a non-empty array of service IDs" });
     }
-    return res.status(201).json(packages);
+
+    // Создание пакета
+    const newPackage = await Packages.create({ name, price, type });
+
+    // Привязка сервисов через промежуточную таблицу
+    // await Promise.all(
+    //   services.map(service =>
+    //     PackagesAndServices.create({
+    //       packageId: newPackage.id,
+    //       serviceId: service.id 
+    //     })
+    //   )
+    // );
+
+    await newPackage.addServices(services.map(s => s.id || s));
+    // Получение всех пакетов с включенными в них сервисами
+    const allPackages = await Packages.findAll({
+      include: [{ model: Services, as: "services" }]
+    });
+
+    return res.status(201).json(allPackages);
   } catch (error) {
-    console.log("Server is not responding:", error)
-    return res.status(500).json({ message: "Server is not responding" })
+    console.error("Server is not responding:", error);
+    return res.status(500).json({ message: "Server is not responding" });
   }
 };
+
+
  
 export const getAllPackages = async(req, res) => {
   try {
