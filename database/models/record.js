@@ -9,6 +9,7 @@ export const Record = sequelize.define('Records', {
     primaryKey: true,
     allowNull: false
   },
+  service: DataTypes.STRING(100),
   ticket: DataTypes.INTEGER,
   action: DataTypes.STRING(100),
   date: DataTypes.DATE,

@@ -7,35 +7,55 @@ import { Adress } from "../database/models/adress.js";
 import { Agreement } from "../database/models/agreement.js";
 
 
-export const createClient= async (req, res) => {
-  const {action, date, infoUser, service, time} = req.body;
-  
+export const createClient = async (req, res) => {
+  const { action, date, infoUser, service, time } = req.body;
+
   try {
-    const client = await Client.create(infoUser);
-    if(!client){
-      return res.status(404).json({message: "Client not created"})
+    // Поиск клиента по имени, фамилии и телефону
+    let client = await Client.findOne({
+      where: {
+        name: infoUser.name,
+        surname: infoUser.surname,
+        phone: infoUser.phone
+      }
+    });
+
+    // Если клиент не найден — создаём нового
+    if (!client) {
+      client = await Client.create(infoUser);
+      if (!client) {
+        return res.status(404).json({ message: "Client not created" });
+      }
     }
-    const records = await Record.findAll();
-    const numberTicket = records.length === 0 ? 1 : records.length + 1  
+
+    // Получение номера следующего билета
+    const recordsCount = await Record.count();
+    const numberTicket = recordsCount + 1;
+
+    // Создание новой записи (Record)
     const newRecord = await Record.create({
       ticket: numberTicket,
-      action: action,
-      service: service,
-      date: date,
-      time: time
-    }); 
-
-    await client.addRecord(newRecord); 
-
-    const clientWithRecord = await Client.findByPk(client.id, {
-      include: [{ model: Record, as: 'record' }] 
+      action,
+      service,
+      date,
+      time
     });
+
+    // Привязка записи к клиенту
+    await client.addRecord(newRecord);
+
+    // Возврат клиента с его записями
+    const clientWithRecord = await Client.findByPk(client.id, {
+      include: [{ model: Record, as: 'record' }]
+    });
+
     return res.status(201).json(clientWithRecord);
   } catch (error) {
-    console.log("Server is not responding:", error)
-    return res.status(500).json({ message: "Server is not responding" })
+    console.log("Server is not responding:", error);
+    return res.status(500).json({ message: "Server is not responding" });
   }
 };
+
 
 export const getAllClients = async(req, res) => {
   try {

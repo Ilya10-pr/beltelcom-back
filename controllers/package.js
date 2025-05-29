@@ -15,17 +15,7 @@ export const createPackage = async (req, res) => {
 
     // Создание пакета
     const newPackage = await Packages.create({ name, price, type });
-
-    // Привязка сервисов через промежуточную таблицу
-    // await Promise.all(
-    //   services.map(service =>
-    //     PackagesAndServices.create({
-    //       packageId: newPackage.id,
-    //       serviceId: service.id 
-    //     })
-    //   )
-    // );
-
+ 
     await newPackage.addServices(services.map(s => s.id || s));
     // Получение всех пакетов с включенными в них сервисами
     const allPackages = await Packages.findAll({
