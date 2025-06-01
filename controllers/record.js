@@ -31,3 +31,18 @@ export const createRecord = async (req, res) => {
   }
 };
 
+
+export const deleteRecord = async(req, res) => {
+  try {
+    const record = await Record.findByPk(req.params.id);
+    if (!record) {
+      return res.status(404).json({message: "Record not deleted"});
+    }
+    await record.destroy();
+
+    res.status(200).json(record);
+  } catch (error) {
+    console.log("Server is not responding:", error)
+    return res.status(500).json({ message: "Server is not responding" })
+  }
+}
